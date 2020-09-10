@@ -30,23 +30,26 @@
         {
             this.cmdTestConnection = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtServerName = new System.Windows.Forms.TextBox();
+            this.txtUserID = new System.Windows.Forms.TextBox();
+            this.txtPassword = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cmdEncryptObjects = new System.Windows.Forms.Button();
             this.chkWindowsAuth = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cboComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // cmdTestConnection
             // 
-            this.cmdTestConnection.Location = new System.Drawing.Point(46, 169);
+            this.cmdTestConnection.Location = new System.Drawing.Point(46, 224);
             this.cmdTestConnection.Name = "cmdTestConnection";
             this.cmdTestConnection.Size = new System.Drawing.Size(124, 23);
-            this.cmdTestConnection.TabIndex = 0;
+            this.cmdTestConnection.TabIndex = 4;
             this.cmdTestConnection.Text = "Test Connection";
             this.cmdTestConnection.UseVisualStyleBackColor = true;
+            this.cmdTestConnection.Click += new System.EventHandler(this.cmdTestConnection_Click);
             // 
             // label1
             // 
@@ -57,27 +60,27 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Server Name";
             // 
-            // textBox1
+            // txtServerName
             // 
-            this.textBox1.Location = new System.Drawing.Point(145, 21);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(283, 20);
-            this.textBox1.TabIndex = 2;
+            this.txtServerName.Location = new System.Drawing.Point(145, 21);
+            this.txtServerName.Name = "txtServerName";
+            this.txtServerName.Size = new System.Drawing.Size(283, 20);
+            this.txtServerName.TabIndex = 0;
             // 
-            // textBox2
+            // txtUserID
             // 
-            this.textBox2.Location = new System.Drawing.Point(145, 59);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(118, 20);
-            this.textBox2.TabIndex = 2;
+            this.txtUserID.Location = new System.Drawing.Point(145, 59);
+            this.txtUserID.Name = "txtUserID";
+            this.txtUserID.Size = new System.Drawing.Size(118, 20);
+            this.txtUserID.TabIndex = 1;
             // 
-            // textBox3
+            // txtPassword
             // 
-            this.textBox3.Location = new System.Drawing.Point(145, 103);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(118, 20);
-            this.textBox3.TabIndex = 2;
-            this.textBox3.UseSystemPasswordChar = true;
+            this.txtPassword.Location = new System.Drawing.Point(145, 103);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.Size = new System.Drawing.Size(118, 20);
+            this.txtPassword.TabIndex = 2;
+            this.txtPassword.UseSystemPasswordChar = true;
             // 
             // label2
             // 
@@ -99,32 +102,53 @@
             // 
             // cmdEncryptObjects
             // 
-            this.cmdEncryptObjects.Location = new System.Drawing.Point(212, 169);
+            this.cmdEncryptObjects.Location = new System.Drawing.Point(212, 224);
             this.cmdEncryptObjects.Name = "cmdEncryptObjects";
             this.cmdEncryptObjects.Size = new System.Drawing.Size(124, 23);
-            this.cmdEncryptObjects.TabIndex = 0;
+            this.cmdEncryptObjects.TabIndex = 5;
             this.cmdEncryptObjects.Text = "Encrypt All DB Text";
             this.cmdEncryptObjects.UseVisualStyleBackColor = true;
+            this.cmdEncryptObjects.Click += new System.EventHandler(this.cmdEncryptObjects_Click);
             // 
             // chkWindowsAuth
             // 
             this.chkWindowsAuth.AutoSize = true;
-            this.chkWindowsAuth.Location = new System.Drawing.Point(284, 99);
+            this.chkWindowsAuth.Location = new System.Drawing.Point(284, 106);
             this.chkWindowsAuth.Name = "chkWindowsAuth";
             this.chkWindowsAuth.Size = new System.Drawing.Size(144, 17);
             this.chkWindowsAuth.TabIndex = 3;
             this.chkWindowsAuth.Text = "Windows  Authentication";
             this.chkWindowsAuth.UseVisualStyleBackColor = true;
+            this.chkWindowsAuth.CheckedChanged += new System.EventHandler(this.chkWindowsAuth_CheckedChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(68, 148);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 13);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Database";
+            // 
+            // cboComboBox
+            // 
+            this.cboComboBox.FormattingEnabled = true;
+            this.cboComboBox.Location = new System.Drawing.Point(145, 148);
+            this.cboComboBox.Name = "cboComboBox";
+            this.cboComboBox.Size = new System.Drawing.Size(221, 21);
+            this.cboComboBox.TabIndex = 7;
             // 
             // EncryptAllDBObjectsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(440, 263);
+            this.ClientSize = new System.Drawing.Size(437, 288);
+            this.Controls.Add(this.cboComboBox);
             this.Controls.Add(this.chkWindowsAuth);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtPassword);
+            this.Controls.Add(this.txtUserID);
+            this.Controls.Add(this.txtServerName);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -142,13 +166,15 @@
 
         private System.Windows.Forms.Button cmdTestConnection;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtServerName;
+        private System.Windows.Forms.TextBox txtUserID;
+        private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button cmdEncryptObjects;
         private System.Windows.Forms.CheckBox chkWindowsAuth;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cboComboBox;
     }
 }
 
