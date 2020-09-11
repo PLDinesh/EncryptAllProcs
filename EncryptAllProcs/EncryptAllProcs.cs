@@ -96,14 +96,15 @@ namespace EncryptAllProcs
                             cboComboBox.Items.Add(x.ToString());
                     }
                     cmdEncryptObjects.Enabled = true;
+                    MessageBox.Show("Connected successfully!\n\n\nPlease select the database you want to encrypt and click encrypt!", "Success!", MessageBoxButtons.OK);
                 }
                 catch (Exception InnerEx)
                 {
                     _logger.Info("Server details are incorrect;"
-                       + " please restart the application.");
+                       + " please retry with proper details");
 
                     MessageBox.Show("Error\n" + "Server details are incorrect;"
-                       + "\nPlease restart the application.\n\n" + InnerEx.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                       + "\nPlease retry with proper details.\n\n" + InnerEx.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 }
             }
@@ -121,11 +122,11 @@ namespace EncryptAllProcs
             {
 
 
-                DialogResult dlgRes = MessageBox.Show("Are you sure you want to encrypt -> " + cboComboBox.Text, "Please Confirm", MessageBoxButtons.YesNo);
+                DialogResult dlgRes = MessageBox.Show("Are you sure you want to encrypt -> " + cboComboBox.Text + "\n\n\nPlease confirm if a backup has been taken before this operation!", "Please Confirm", MessageBoxButtons.YesNo);
 
                 if (dlgRes == DialogResult.Yes)
                 {
-                    dlgRes = MessageBox.Show("Please note that the encryption is not reversible. Please confirm that you want to encrypt -> " + cboComboBox.Text, "Please Confirm", MessageBoxButtons.YesNo);
+                    dlgRes = MessageBox.Show("Please note that the encryption is not reversible. Please confirm that you want to encrypt -> " + cboComboBox.Text + "\n\n\nPlease confirm if a backup has been taken before this operation!", "Please Confirm", MessageBoxButtons.YesNo);
                 }
 
                 if (dlgRes == DialogResult.No)
@@ -170,7 +171,15 @@ namespace EncryptAllProcs
                                 sp.TextMode = false;
                                 sp.IsEncrypted = true;
                                 sp.TextMode = true;
-                                sp.Alter();
+
+                                try
+                                {
+                                    sp.Alter();
+                                }
+                                catch (Exception excep)
+                                {
+                                    _logger.Info(excep, "Encryption failed for -> {0}, error- -> {1}", sp.Name, excep.Message);
+                                }
                                 Console.WriteLine("   " + sp.Name); // display name of the SP.         
                                 _logger.Info("Encrypting Proc =>{0}", sp.Name);
                             }
@@ -182,9 +191,9 @@ namespace EncryptAllProcs
                     for (int i = 0; i < db.UserDefinedFunctions.Count; i++)
                     {
                         udfs = db.UserDefinedFunctions[i];
-                        if (!udfs.IsSystemObject)         // Exclude System stored procedures
+                        if (!udfs.IsSystemObject)
                         {
-                            if (!udfs.IsEncrypted)        // Exclude already encrypted stored procedures
+                            if (!udfs.IsEncrypted)
                             {
                                 udfs.TextMode = false;
                                 udfs.IsEncrypted = true;
@@ -195,25 +204,51 @@ namespace EncryptAllProcs
                                 }
                                 catch (Exception excep)
                                 {
-                                    _logger.Info("Encryption failed for -> {0}", excep.Message);
+                                    _logger.Info(excep, "Encryption failed for -> {0}, error- -> {1}", udfs.Name, excep.Message);
                                 }
-                                Console.WriteLine("   " + udfs.Name); // display name of the SP.         
+                                Console.WriteLine("   " + udfs.Name);
                                 _logger.Info("Encrypting UDF  =>{0}", udfs.Name);
                             }
                         }
                     }
 
+                    Microsoft.SqlServer.Management.Smo.View viewobj = null;
 
 
+                    for (int i = 0; i < db.Views.Count; i++)
+                    {
+                        viewobj = db.Views[i];
+                        if (!viewobj.IsSystemObject)
+                        {
+                            if (!viewobj.IsEncrypted)
+                            {
+                                viewobj.TextMode = false;
+                                viewobj.IsEncrypted = true;
+                                viewobj.TextMode = true;
+                                try
+                                {
+                                    viewobj.Alter();
+                                }
+                                catch (Exception excep)
+                                {
+                                    _logger.Info(excep, "Encryption failed for -> {0}, error- -> {1}", viewobj.Name, excep.Message);
+                                }
+                                Console.WriteLine("   " + viewobj.Name); // display name of the SP.         
+                                _logger.Info("Encrypting View  =>{0}", viewobj.Name);
+                            }
+                        }
+                    }
+
+                    MessageBox.Show("Process has completed succssfully. Please refer to the application logs for more information" , "Operation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 }
                 catch (Exception InnerEx)
                 {
                     _logger.Info("Server details are incorrect;"
-                       + " please restart the application.");
+                       + " please retry with proper details");
 
                     MessageBox.Show("Error\n" + "Server details are incorrect;"
-                       + "\nPlease restart the application.\n\n" + InnerEx.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                       + "\nPlease retry with proper details.\n\n" + InnerEx.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 }
             }
