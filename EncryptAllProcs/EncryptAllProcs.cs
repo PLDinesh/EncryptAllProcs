@@ -82,7 +82,7 @@ namespace EncryptAllProcs
 
 
 
-                var srv = new Server();
+                var srv = new Server(serverConnection);
                 try // Check to see if server connection details are ok.
                 {
                     srv = new Server();
@@ -151,7 +151,7 @@ namespace EncryptAllProcs
 
 
 
-                var srv = new Server();
+                var srv = new Server(serverConnection);
                 try // Check to see if server connection details are ok.
                 {
                     var db = new Database();
