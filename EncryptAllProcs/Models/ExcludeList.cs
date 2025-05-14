@@ -11,5 +11,7 @@ namespace EncryptAllProcs.Models
         public List<StoredProcedure> StoredProcedures { get; set; } = new List<StoredProcedure>();
 
         public List<View> Views { get; set; } = new List<View>();
+
+        public List<string> ExcludedSchemas { get; set; } = new List<string>();
     }
 }

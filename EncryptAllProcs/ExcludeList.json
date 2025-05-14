@@ -1,0 +1,43 @@
+{
+  "ExcludedSchemas": ["reporting","reports"],
+  "StoredProcedures": [
+    {
+      "Name": "GetFilteredAddress",
+      "Schema": "dbo",
+      "IsExcluded": true,
+      "DBName": "IVPRAD"
+    },
+    {
+      "Name": "sp_WhoIsActive",
+      "Schema": "dbo",
+      "IsExcluded": true,
+      "DBName": "IVPRAD"
+    },
+    {
+      "Name": "RAD_UpdateWorkflowHierarchy",
+      "Schema": "dbo",
+      "IsExcluded": false,
+      "DBName": "IVPRAD"
+    }
+  ],
+  "Views": [
+    {
+      "ViewName": "vw_ivp_rad_account_master",
+      "Schema": "dbo",
+      "IsExcluded": true,
+      "DBName": "IVPRAD"
+    },
+    {
+      "ViewName": "vw_ivp_rad_user_analytics",
+      "Schema": "dbo",
+      "IsExcluded": false,
+      "DBName": "IVPRAD"
+    },
+    {
+      "ViewName": "vw_ivp_rad_user_master",
+      "Schema": "dbo",
+      "IsExcluded": true,
+      "DBName": "IVPRAD"
+    }
+  ]
+}

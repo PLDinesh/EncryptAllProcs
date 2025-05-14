@@ -11,12 +11,45 @@ using System.Windows.Forms;
 using NLog;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
+using EncryptAllProcs.Models;
+using System.Runtime.InteropServices;
 
 namespace EncryptAllProcs
 {
     public partial class EncryptAllDBObjectsForm : Form
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
+
+        private static ExcludeList _excludeList = null;
+
+        private void LoadExcludeList()
+        {
+            try
+            {
+                string filePath = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "ExcludeList.json");
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    string jsonContent = System.IO.File.ReadAllText(filePath);
+                    _excludeList = Newtonsoft.Json.JsonConvert.DeserializeObject<ExcludeList>(jsonContent);
+                    _logger.Info($"ExcludeList loaded successfully with {_excludeList.StoredProcedures.Count} stored procedures and {_excludeList.Views.Count} views");
+                }
+                else
+                {
+                    _excludeList = new ExcludeList();
+                    _logger.Warn("ExcludeList.json file not found, using empty exclude list");
+                }
+            }
+            catch (Exception ex)
+            {
+                _excludeList = new ExcludeList();
+                _logger.Error(ex, "Failed to load ExcludeList.json");
+                MessageBox.Show($"Error loading ExcludeList.json: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
         public EncryptAllDBObjectsForm()
         {
@@ -120,7 +153,7 @@ namespace EncryptAllProcs
         {
             try
             {
-
+                LoadExcludeList();
 
                 DialogResult dlgRes = MessageBox.Show("Are you sure you want to encrypt -> " + cboComboBox.Text + "\n\n\nPlease confirm if a backup has been taken before this operation!", "Please Confirm", MessageBoxButtons.YesNo);
 
@@ -160,10 +193,25 @@ namespace EncryptAllProcs
                         throw new Exception("Error! Unable to select");
 
                     Console.WriteLine("Encrypted stored procedures: ");
-                    var sp = new StoredProcedure();
+                    Microsoft.SqlServer.Management.Smo.StoredProcedure sp = null;
                     for (int i = 0; i < db.StoredProcedures.Count; i++)
                     {
                         sp = db.StoredProcedures[i];
+                        if(_excludeList !=null)
+                        {
+                            var excludeSP = _excludeList.StoredProcedures.FirstOrDefault(x => x.Name.ToLower() == sp.Name.ToLower() && x.DBName.ToLower() == db.Name.ToLower());
+                            if (excludeSP != null)
+                            {
+                                _logger.Info("Skipping encryption for stored procedure: {0} in database: {1}", sp.Name, db.Name);
+                                continue;
+                            }
+
+                            if (_excludeList.ExcludedSchemas.Contains(sp.Schema.ToLower()))
+                            {
+                                _logger.Info("Skipping encryption for stored procedure: {0} in database: {1} due to excluded schema", sp.Name, db.Name);
+                                continue;
+                            }
+                        }
                         if (!sp.IsSystemObject)         // Exclude System stored procedures
                         {
                             if (!sp.IsEncrypted)        // Exclude already encrypted stored procedures
@@ -222,6 +270,20 @@ namespace EncryptAllProcs
                         {
                             if (!viewobj.IsEncrypted)
                             {
+                                if (_excludeList != null)
+                                {
+                                    var excludeView = _excludeList.Views.FirstOrDefault(x => x.ViewName.ToLower() == viewobj.Name.ToLower() && x.DBName.ToLower() == db.Name.ToLower());
+                                    if (excludeView != null)
+                                    {
+                                        _logger.Info("Skipping encryption for view: {0} in database: {1}", viewobj.Name, db.Name);
+                                        continue;
+                                    }
+                                    if(_excludeList.ExcludedSchemas.Contains(viewobj.Schema.ToLower()))
+                                    {
+                                        _logger.Info("Skipping encryption for view: {0} in database: {1} due to excluded schema", viewobj.Name, db.Name);
+                                        continue;
+                                    }
+                                }
                                 viewobj.TextMode = false;
                                 viewobj.IsEncrypted = true;
                                 viewobj.TextMode = true;
