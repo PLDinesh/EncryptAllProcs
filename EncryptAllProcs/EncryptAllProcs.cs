@@ -82,10 +82,10 @@ namespace EncryptAllProcs
 
 
 
-                var srv = new Server();
+                var srv = new Server(serverConnection);
                 try // Check to see if server connection details are ok.
                 {
-                    srv = new Server();
+                    //  srv = new Server();
                     var db = new Database();
                     cboComboBox.Items.Clear();
 
@@ -151,7 +151,7 @@ namespace EncryptAllProcs
 
 
 
-                var srv = new Server();
+                var srv = new Server(serverConnection);
                 try // Check to see if server connection details are ok.
                 {
                     var db = new Database();
@@ -239,7 +239,7 @@ namespace EncryptAllProcs
                         }
                     }
 
-                    MessageBox.Show("Process has completed succssfully. Please refer to the application logs for more information" , "Operation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Process has completed succssfully. Please refer to the application logs for more information", "Operation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 }
                 catch (Exception InnerEx)
